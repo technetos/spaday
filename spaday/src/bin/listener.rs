@@ -1,17 +1,14 @@
-use std::fs;
 use std::path::PathBuf;
 use std::sync::mpsc::{channel, Sender};
 
 use clap::Parser;
-use pgp::{Deserializable, SignedPublicKey};
 use pnet::datalink::{self, Channel};
 use pnet::packet::ethernet::{EtherTypes, EthernetPacket};
 use pnet::packet::ip::IpNextHeaderProtocols;
 use pnet::packet::ipv4::Ipv4Packet;
 use pnet::packet::udp::UdpPacket;
 use pnet::packet::Packet;
-
-const KNOCKKNOCK: &[u8] = b"KNOCKKNOCK";
+use spaday::KNOCKKNOCK;
 
 #[derive(Parser, Debug)]
 #[command(version)]
@@ -27,8 +24,6 @@ fn main() -> anyhow::Result<()> {
     tracing_subscriber::fmt::init();
 
     let args = Args::parse();
-
-    let (public_key, _) = SignedPublicKey::from_string(&fs::read_to_string(args.pub_key_file)?)?;
 
     let (tx, rx) = channel::<Vec<u8>>();
 
